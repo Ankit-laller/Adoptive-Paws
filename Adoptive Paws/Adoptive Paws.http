@@ -1,0 +1,11 @@
+@Adoptive_Paws_HostAddress = http://localhost:5256
+
+GET {{Adoptive_Paws_HostAddress}}/weatherforecast/
+Accept: application/json
+
+
+
+GET {{Adoptive_Paws_HostAddress}}/sendAdoption/
+Accept: application/json
+
+###

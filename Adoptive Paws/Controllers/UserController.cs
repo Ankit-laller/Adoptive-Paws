@@ -29,13 +29,13 @@ namespace Adoptive_Paws.Controllers
         }
         [Authorize]
         [HttpGet("GetUserById")]
-        public async Task<IActionResult> GetUserById(int id)
+        public async Task<IActionResult> GetUserById(int userId)
         {
-            if (id == null)
+            if (userId == null)
             {
                 return BadRequest();
             }
-            var result = await sender.Send(new GetUserByIdQuery(id));
+            var result = await sender.Send(new GetUserByIdQuery(userId));
             if (result != null) 
             {
                 return Ok(result);

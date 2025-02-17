@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace AdoptivePaws.Core.Dtos
 {
-    public class LoginResponse
+    public class ApiResponse
     {
+        public bool success { get; set; }
+        public string message { get; set; }
+        public dynamic result { get; set; }
     }
 }

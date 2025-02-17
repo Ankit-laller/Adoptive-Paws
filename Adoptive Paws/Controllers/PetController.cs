@@ -34,6 +34,11 @@ namespace Adoptive_Paws.Controllers
         {
             return Ok(await _sender.Send(new GetPetDataByPetTypeQuery(petType)));
         }
+        [HttpGet("GetPetDataByPetId")]
+        public async Task<ActionResult> GetPetDataByPetId(string petId)
+        {
+            return Ok(await _sender.Send(new GetPetDataByIdQuery(petId)));
+        }
         [HttpGet("GetAdoptionRequests")]
         public async Task<ActionResult> GetAdoptionRequests()
         {

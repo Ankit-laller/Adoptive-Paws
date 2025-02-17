@@ -52,11 +52,58 @@ namespace AdoptivePaws.Core.Interfaces.User
             };
 
         }
-
-        public string GenerateJwtToken(UserEntity user)
+        public async Task<LoginReponse> ValidateTokenAsync(string token)
         {
+            if (string.IsNullOrEmpty(token))
+                return null;
+
             try
             {
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes(_configuration.GetConnectionString("JWT_SECRET"));
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = _configuration.GetConnectionString("JWT_ISSUER"),
+                    ValidateAudience = true,
+                    ValidAudience = _configuration.GetConnectionString("JWT_AUDIENCE"),
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero // to ensure no clock skew tolerance
+                };
+
+                SecurityToken validatedToken;
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+                var claims = principal.Claims;
+
+                // Extract user details from the claims
+                UserEntity user = (await userRepository.GetAllUsersAsync()).Where(x => x.Email.Equals(claims.FirstOrDefault(c => c.Type == "UserEmail")?.Value, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+
+                var userId = claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+                return new LoginReponse
+                {
+                    Name = user.Name,
+                    City = user.City,
+                    EmailAddress = user.Email,
+                    PhoneNo = user.PhoneNo,
+                    token = token,
+                };
+            }
+            catch (SecurityTokenExpiredException)
+            {
+                // Token is expired
+                return null;
+            }
+           
+            // If the token is validated, you can return true.
+           
+        }
+
+        private string GenerateJwtToken(UserEntity user)
+        {
+           
                 var _jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
                 // Retrieve the JWT secret from environment variables and encode it
                 var key = Encoding.ASCII.GetBytes(_configuration.GetConnectionString("JWT_SECRET")!);
@@ -95,10 +142,7 @@ namespace AdoptivePaws.Core.Interfaces.User
 
                 // Write the token as a string and return it
                 return _jwtSecurityTokenHandler.WriteToken(token);
-            }catch(Exception ex)
-            {
-                throw ex;
-            }
+            
         }
 
        

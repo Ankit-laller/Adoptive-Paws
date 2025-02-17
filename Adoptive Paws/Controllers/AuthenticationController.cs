@@ -16,5 +16,11 @@ namespace Adoptive_Paws.Controllers
             var result = await sender.Send(new LoginQuery(login));
             return Ok(result);
         }
+        [HttpGet("ValidateToken")]
+        public async Task<IActionResult> ValidateTokenAsync(string token)
+        {
+            var result = await sender.Send(new ValidateTokenQuery(token));
+            return Ok(result);
+        }
     }
 }

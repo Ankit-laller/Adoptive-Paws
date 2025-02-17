@@ -1,4 +1,5 @@
 ﻿using AdoptivePaws.Core.Common;
+using AdoptivePaws.Core.Dtos;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -68,17 +69,17 @@ namespace AdoptivePaws.Application.Middleware
 
         private async Task<string> CreateApiResponseAsync(string responseBody, HttpContext context)
         {
+            var apiResponse= new ApiResponse(); 
             // Try parsing as a collection (array or list)
             try
             {
                 // Attempt to parse as an array
                 var parsedArray = JsonSerializer.Deserialize<object[]>(responseBody);
-                var apiResponse = new
-                {
-                    success = true,
-                    message = "Request processed successfully",
-                    result = parsedArray
-                };
+
+                apiResponse.success = true;
+                apiResponse.message = "Request processed successfully";
+                apiResponse.result = parsedArray;
+                
                 return JsonSerializer.Serialize(apiResponse);
             }
             catch (JsonException)
@@ -87,25 +88,22 @@ namespace AdoptivePaws.Application.Middleware
                 try
                 {
                     var parsedObject = JsonSerializer.Deserialize<object>(responseBody);
-                    var apiResponse = new
-                    {
-                        success = true,
-                        message = "Request processed successfully",
-                        result = parsedObject
-                    };
+
+                    apiResponse.success = true;
+                    apiResponse.message = "Request processed successfully";
+                    apiResponse.result = parsedObject;
                     return JsonSerializer.Serialize(apiResponse);
                 }
                 catch (JsonException)
                 {
                     //try
                     //{
-                        //var parsedObject = JsonSerializer.Deserialize<string>(responseBody);
-                        var apiResponse = new
-                        {
-                            success = true,
-                            message = "Request processed successfully",
-                            result = responseBody
-                        };
+                    //var parsedObject = JsonSerializer.Deserialize<string>(responseBody);
+
+                        apiResponse.success = true;
+                        apiResponse.message = "Request processed successfully";
+                        apiResponse.result = responseBody;
+
                         return JsonSerializer.Serialize(apiResponse);
                     //}
                     //catch (JsonException)

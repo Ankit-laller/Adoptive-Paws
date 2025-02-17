@@ -66,6 +66,10 @@ namespace AdoptivePaws.Infrastructure.Repositories.User
         public async Task<UserDto> GetUserByIdAsync(int id)
         {
             var data = await dbContext.Users.FirstOrDefaultAsync(x => x.SNo == id);
+            if(data is null)
+            {
+                return null;
+            }
             return new UserDto
             {
                 Id = data.SNo,

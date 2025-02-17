@@ -10,5 +10,6 @@ namespace AdoptivePaws.Core.Interfaces.User
     public interface ILoginAppService
     {
         Task<LoginReponse> LoginAsync(LoginDto input);
+        Task<LoginReponse> ValidateTokenAsync(string token);
     }
 }

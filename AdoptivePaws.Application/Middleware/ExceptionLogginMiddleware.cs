@@ -36,17 +36,24 @@ namespace AdoptivePaws.Application.Middleware
 
                 var query = @"insert into ApiAuditLogs ([Method],[ErrorMessage],[ResponseJson],[ClientIpAddress])
                             values(@Method,@ErrorMessage,@ResponseJson,@ClientIpAddress)";
-                try
-                {
+                
                   //  var bodyText = (await context.Request.ReadFormAsync()).ToString();
 
                     // Read the request body as a string (serialized format, e.g., JSON)
                    // param.Add("RequestJson", bodyText);
                     await DapperSqlHelper.ExecuteSqlAsync(query, param);
-                }
-                catch (Exception e) { }
-                return;
-                //handle exception
+                context.Response.StatusCode = 500; // Internal Server Error
+                context.Response.ContentType = "application/json";
+
+                var response = new
+                {
+                    success = false,
+                    message = "Something went wrong"
+                };
+
+                // Return the response as JSON
+                var jsonResponse = JsonSerializer.Serialize(response);
+                await context.Response.WriteAsync(jsonResponse);                //handle exception
             }
         }
     }
